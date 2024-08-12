@@ -30,7 +30,7 @@ void Game::initWindow()
     sf::Vector2i background_shape = this->m_background->size();
     this->m_video_mode.height = background_shape.y;
     this->m_video_mode.width = background_shape.x;
-    this->m_window = new sf::RenderWindow(this->m_video_mode, "SFML works!");
+    this->m_window = new sf::RenderWindow(this->m_video_mode, "Herbivore Slime");
     this->m_window->setFramerateLimit(60);
 
 }
