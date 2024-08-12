@@ -8,10 +8,6 @@ Food::Food(int xpos, int ypos, int width, int height, std::string name, Daycycle
 	{
 	initTexture();
 	initSprite();
-	/*if (this->m_texture.loadFromFile(texture))
-	{
-		std::cout << "Error in texture" << std::endl;
-	}*/
 	}
 
 Food::~Food()
@@ -35,7 +31,7 @@ void Food::render(sf::RenderTarget& target)
 	target.draw(this->m_sprite);
 }
 
-bool Food::can_eat_food_now(Daycycle time) 
+bool Food::canFoodBeEatenNow(Daycycle time) 
 {
 	if (time == this->m_eatingtime)
 	{

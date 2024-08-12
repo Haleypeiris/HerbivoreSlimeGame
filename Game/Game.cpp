@@ -1,6 +1,5 @@
 #include "Game.h"
 
-
 Game::Game()
 {
 	this->initVariables();
@@ -21,18 +20,17 @@ void Game::initVariables()
     this->m_food_items.clear();
     this->initBackground();
     this->initHungerLevels();
-    ////////////////////////////////
     this->initFoodList();
     this->initText();
 }
 void Game::initWindow()
 {
+    //Create the window to match the size of the background image
     sf::Vector2i background_shape = this->m_background->size();
     this->m_video_mode.height = background_shape.y;
     this->m_video_mode.width = background_shape.x;
     this->m_window = new sf::RenderWindow(this->m_video_mode, "Herbivore Slime");
     this->m_window->setFramerateLimit(60);
-
 }
 void Game::initBackground()
 {
@@ -44,18 +42,13 @@ void Game::initPlayer()
 }
 void Game::initHungerLevels()
 {
-    //Starting off hungry
+    //Starting off with 0 hunger
     this->m_hunger_levels = new HungerManager(0);
-    this->m_gui = new GuiSystem(m_hunger_levels);
+    this->m_gui = new GuiSystem(this->m_hunger_levels);
 }
 void Game::initFoodList()
 {
-    for (int i = 0; i < 5; i++)
-    {
-        //todo: looping how many items to make
-        // check that the item isn't in the water
-
-    }
+    //Randomize where the fruit is spawnned
     std::srand(m_clock.getElapsedTime().asMilliseconds());
     this->m_food_items.insert(std::make_shared<Food>((std::rand() % 700 + 50), (std::rand() % 500 + 50), 16, 16, "tomato", Daycycle_Night, "Texture/tomato.png"));
     this->m_food_items.insert(std::make_shared<Food>((std::rand() % 700 + 50), (std::rand() % 500 + 50), 16, 16, "pumpkin", Daycycle_Night, "Texture/pumpkin.png"));
@@ -71,12 +64,10 @@ void Game::initText()
     this->m_text.setFont(this->m_font);
     this->m_text.setFillColor(sf::Color::Black);
     this->m_text.setCharacterSize(30);
-
 }
 
 void Game::update()
 {
-    
     if (this->m_gamestate == GameState_Start)
     {
         this->startMenu();
@@ -92,20 +83,21 @@ void Game::update()
         this->pollEvents();
         this->updatePlayer();
 
-        if (change_in_time(m_time_of_day) && m_hunger_levels->get_hunger_levels() < 10 && this->m_food_items.size()<10 )
+        if (changeInTime(this->m_time_of_day) && this->m_hunger_levels->getHungerLevels() < 10 && this->m_food_items.size()<10 )
         {
+            //Adds more food to the world
             addToFoodList();
         }
-        else if (m_hunger_levels->get_hunger_levels() >= 10)
+        else if (this->m_hunger_levels->getHungerLevels() >= 10)
         {
             //end game
-            m_gamestate = GameState_End;
+            this->m_gamestate = GameState_End;
         }
     }
 }
 void Game::updatePlayer()
 {
-    m_player->update();
+    this->m_player->update();
 }
 void Game::render()
 {
@@ -115,13 +107,15 @@ void Game::render()
     //Put background image in
     this->m_background->render(*this->m_window);
 
+    //Draw food images in
     for (auto &food : this->m_food_items)
     {
         food->render(*this->m_window);
     }
 
+    //Draw the player, text, and GUI
     this->renderPlayer();
-    this->m_gui->render(*this->m_window);
+    this->m_gui->renderHungerBar(*this->m_window);
     this->renderText(*this->m_window);
 
     //Write pixals to screen
@@ -133,21 +127,22 @@ void Game::renderPlayer()
 }
 void Game::mousePos()
 {
+    //Save the mouse position
     this->m_mouse_pos = sf::Mouse::getPosition(*this->m_window);
 }
 void Game::worldClock()
 {
-    daycycle_timer(m_time_of_day, m_clock);
+    //Updates the world clock
+    daycycleTimer(this->m_time_of_day, this->m_clock);
 }
 void Game::pollEvents()
 {
+    //Checks for SFML events
     while (this->m_window->pollEvent(this->m_ev))
     {
         switch (this->m_ev.type)
         {
         case sf::Event::Closed:
-            //delete tomato;
-            //this->deleteFoodList();
             this->m_window->close();
             break;
         case sf::Event::KeyPressed:
@@ -155,53 +150,51 @@ void Game::pollEvents()
             {
                 this->m_window->close();
             }
-
             if (this->m_ev.key.code == sf::Keyboard::E)
             {
+                //Check if player is on top of a food item and clears the item after being consumed
                 std::set<std::shared_ptr<Food>>::iterator item_to_erase = m_food_items.end();
                 for (auto& food : this->m_food_items)
                 {
-                    if (food->is_mouse_within_area(m_player->getPos()))
+                    if (food->isPlayerWithinArea(m_player->getPos()))
                     {
                         this->m_text.setString("NOM");
                         this->m_text.setPosition(food->getPos().x - 10.f, food->getPos().y - 10.f);
-                        //iterate through all possible items
-                        if (food->get_name() == "pumpkin")
+                        
+                        if (food->getName() == "pumpkin")
                         {
-                            std::cout << "pumpkin" << std::endl;
+                            //std::cout << "pumpkin" << std::endl;
                             item_to_erase = m_food_items.find(food);
-                            m_hunger_levels->increase_hunger_levels(1);
+                            m_hunger_levels->increaseHungerLevels(1);
                         }
-                        else if (food->get_name() == "tomato")
+                        else if (food->getName() == "tomato")
                         {
-                            std::cout << "tomato2" << std::endl;
+                            //std::cout << "tomato" << std::endl;
                             item_to_erase = m_food_items.find(food);
-                            m_hunger_levels->increase_hunger_levels(1);
+                            m_hunger_levels->increaseHungerLevels(1);
                         }
-                        else if (food->get_name() == "tomato2")
+                        else if (food->getName() == "tomato2")
                         {
-                            std::cout << "tomato2" << std::endl;
+                            //std::cout << "tomato2" << std::endl;
                             item_to_erase = m_food_items.find(food);
-                            m_hunger_levels->increase_hunger_levels(1);
+                            m_hunger_levels->increaseHungerLevels(1);
                         }
-                        else if (food->get_name() == "pumpkin2")
+                        else if (food->getName() == "pumpkin2")
                         {
-                            std::cout << "pumpkin2" << std::endl;
+                            //std::cout << "pumpkin2" << std::endl;
                             item_to_erase = m_food_items.find(food);
-                            m_hunger_levels->increase_hunger_levels(1);
+                            m_hunger_levels->increaseHungerLevels(1);
                         }
-                        m_gui->update_hp_bar();
+                        m_gui->updateHungerBar();
                     }
                 }
-                if (item_to_erase != m_food_items.end())
+                //Clears the item from the list of active food items
+                if (item_to_erase != this->m_food_items.end())
                 {
                     m_food_items.erase(item_to_erase);
-                    item_to_erase = m_food_items.end();
+                    item_to_erase = this->m_food_items.end();
                 }
             }
-            break;
-
-        case sf::Event::MouseButtonPressed:
             break;
         }
     }
@@ -215,39 +208,17 @@ void Game::addToFoodList()
     this->m_food_items.insert(std::make_shared<Food>((std::rand() % 700 + 50), (std::rand() % 500 + 50), 16, 16, "tomato", Daycycle_Night, "Texture/tomato.png"));
 
 }
-void Game::deleteFoodList()
-{
-
-}
-void Game::change_background_color(Daycycle time)
-{
-    if (time == Daycycle_Night)
-    {
-        this->m_background->setTint(sf::Color(255, 165, 0, 200));
-    }
-    else if (time == Daycycle_Morning)
-    {
-        this->m_background->setTint(sf::Color(255, 234, 0, 255));
-    }
-    else
-    {
-        this->m_background->setTint(sf::Color(255, 255, 255, 255));
-    }
-}
-
 void Game::renderText(sf::RenderTarget& target)
 {
     target.draw(this->m_text);
 }
-
 void Game::startMenu()
 {
     this->m_text.setString("Collect ten pieces of food to satify your hunger\n WASD to Move\n E to Eat\n Press any key to continue");
-    this->m_text.setPosition((m_background->size().x/2.f)*0.2f, (m_background->size().y/2.f)*0.8f);
+    this->m_text.setPosition((this->m_background->size().x/2.f)*0.2f, (this->m_background->size().y/2.f)*0.8f);
     this->m_text.setFillColor(sf::Color::White);
     this->m_background->setTint(sf::Color(200, 200, 200, 255));
     
-
     if (this->m_window->pollEvent(this->m_ev))
     {
         switch (this->m_ev.type)
@@ -258,17 +229,13 @@ void Game::startMenu()
             this->m_background->setTint(sf::Color(255, 255, 255, 255));
             this->m_text.setFillColor(sf::Color::Black);
             break;
-
-
         }
-        
     }
-   
 }
 void Game::endMenu()
 {
     this->m_text.setString("Congrats the slime is now full\n Press ESC to exit game");
-    this->m_text.setPosition((m_background->size().x / 2.f) * 0.5f, (m_background->size().y / 2.f) * 0.8f);
+    this->m_text.setPosition((this->m_background->size().x / 2.f) * 0.5f, (this->m_background->size().y / 2.f) * 0.8f);
 
     if (this->m_window->pollEvent(this->m_ev))
     {

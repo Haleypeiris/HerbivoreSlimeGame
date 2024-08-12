@@ -1,10 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Time.hpp>
-#include <SFML/Graphics/Text.hpp>
 #include <iostream>
-#include <thread>
 #include <string>
 #include <memory>
 #include <set>
@@ -28,7 +25,7 @@ private:
 	sf::Event m_ev;
 	sf::Vector2i m_mouse_pos;
 	sf::Clock m_clock;
-	sf::Clock m_temp_clock;
+	//sf::Clock m_temp_clock; TODO: add a secondary timer for text duration
 	std::set<std::shared_ptr<Food>> m_food_items;
 	std::string m_food_names[5];
 	sf::Text m_text;
@@ -42,13 +39,11 @@ private:
 	Player* m_player;
 	Daycycle m_time_of_day;
 
-
 	void initVariables();
 	void initHungerLevels();
 	void initWindow();
 	void initFoodList();
 	void initText();
-	void deleteFoodList();
 	void initBackground();
 	void initPlayer();
 public:
@@ -60,12 +55,11 @@ public:
 	void updatePlayer();
 	void render();
 	void renderPlayer();
+	void startMenu();
+	void endMenu();
 	void mousePos();
 	void worldClock();
 	void addToFoodList();
-	void change_background_color(Daycycle time);
 	void renderText(sf::RenderTarget& target);
-	void startMenu();
-	void endMenu();
 };
 

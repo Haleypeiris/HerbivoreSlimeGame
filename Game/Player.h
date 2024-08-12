@@ -1,9 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Time.hpp>
-
 #include "SpriteClass.h"
+
+#define SPRITE_BODY 32
+#define END_OF_SPRITE_SHEET 224
 
 enum Player_Animation_States
 {
@@ -19,24 +19,28 @@ class Player : public SpriteClass
 private:
 	sf::Vector2f m_pos;
 	sf::IntRect m_currentFrame;
-	short m_animation_state;
-	bool m_movement;
-	sf::Clock animationTimer;
+	sf::Clock m_animationTimer;
+
 
 	//animation
+	short m_animation_state;
 	void initAnimations();
 
 	//movement
+	bool m_movement;
 	void updateMovement();
-	void run();
+
 	//core
 	void initVariables();
+	
+	//Physics
 	sf::Vector2f m_velocity;
 	float m_acceleration;
 	float m_drag;
 	float m_max_velocity;
 	float m_min_velocity;
 	void initPhysics();
+
 public:
 	Player(const std::string& text);
 	~Player();
@@ -46,7 +50,5 @@ public:
 	void move(const float dir_x, const float dir_y);
 	void updatePos();
 	sf::Vector2f getPos();
-
-
 };
 

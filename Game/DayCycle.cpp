@@ -10,7 +10,7 @@
 
 static Daycycle last_stored_time = Daycycle_Unknown;
 
-void daycycle_timer(Daycycle &daycycle, sf::Clock &clock)
+void daycycleTimer(Daycycle &daycycle, sf::Clock &clock)
 {
 
     using namespace std::literals::chrono_literals;
@@ -42,7 +42,7 @@ void daycycle_timer(Daycycle &daycycle, sf::Clock &clock)
 
 }
 
-bool change_in_time(Daycycle& daycycle)
+bool changeInTime(Daycycle& daycycle)
 {
     if (daycycle != last_stored_time)
     {

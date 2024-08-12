@@ -5,10 +5,12 @@ int main()
 {
     Game game;
 
-    while (game.getWindowIsOpen()) //Main Loop
+    //Main Loop
+    while (game.getWindowIsOpen()) 
     {
         game.update();
-        game.render();
+        //Draws all the assists to the screen
+        game.render(); 
     }
     return 0;
 }

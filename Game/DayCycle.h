@@ -6,5 +6,5 @@
 
 #include "Common.h"
 
-void daycycle_timer(Daycycle &daycycle, sf::Clock &clock);
-bool change_in_time(Daycycle& daycycle);
+void daycycleTimer(Daycycle &daycycle, sf::Clock &clock);
+bool changeInTime(Daycycle& daycycle);

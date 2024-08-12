@@ -8,16 +8,15 @@
 class GuiSystem
 {
 private:
-    HungerManager* hunger_levels;
-    float hp_bar_max_width;
-    sf::RectangleShape hp_bar_back;
-    sf::RectangleShape hp_bar_inner;
+    HungerManager* m_hunger_levels;
+    float m_hunger_bar_max_width;
+    sf::RectangleShape m_hunger_bar_back;
+    sf::RectangleShape m_hunger_bar_inner;
 
 public:
     GuiSystem(HungerManager* hunger);
 
-    void init_hp_bar();
-    void render_hp_bar(sf::RenderTarget& target);
-    void render(sf::RenderTarget& target);
-    void update_hp_bar();
+    void initHungerBar();
+    void renderHungerBar(sf::RenderTarget& target);
+    void updateHungerBar();
 };

@@ -6,27 +6,27 @@ InteractionArea::InteractionArea(int xpos, int ypos, int width, int height, std:
     this->m_ypos = ypos;
     this->m_width = width;
     this->m_height = height;
-    area.setPosition(sf::Vector2f(xpos, ypos));
-    area.setSize(sf::Vector2f(width, height));
-    //area.setFillColor(sf::Color::Red);
-    area.setFillColor(sf::Color::Red);
+    this->m_area.setPosition(sf::Vector2f(xpos, ypos));
+    this->m_area.setSize(sf::Vector2f(width, height));
+    this->m_area.setFillColor(sf::Color::Red);
 
 }
 InteractionArea::~InteractionArea()
 {
 
 }
-sf::RectangleShape InteractionArea::get_area()
+sf::RectangleShape InteractionArea::getArea()
 {
-    return area;
+    return this->m_area;
 }
-void InteractionArea::set_color(sf::Color color)
+void InteractionArea::setColor(sf::Color color)
 {
-    area.setFillColor(color);
+    this->m_area.setFillColor(color);
 }
-bool InteractionArea::is_mouse_within_area(sf::Vector2f location)
+bool InteractionArea::isPlayerWithinArea(sf::Vector2f location)
 {
-    if ((location.x >= m_xpos-8) && (location.x <= m_xpos + m_width+8) && (location.y >= m_ypos-8) && (location.y <= m_ypos + m_height+8))
+    //checks if object is within certain amount of pixels of a location
+    if ((location.x >= m_xpos-EDGE) && (location.x <= m_xpos + m_width+ EDGE) && (location.y >= m_ypos- EDGE) && (location.y <= m_ypos + m_height+ EDGE))
     {
         return true;
     }
@@ -36,9 +36,9 @@ bool InteractionArea::is_mouse_within_area(sf::Vector2f location)
     }
 }
 
-std::string InteractionArea::get_name()
+std::string InteractionArea::getName()
 {
-    return m_name;
+    return this->m_name;
 }
 sf::Vector2f InteractionArea::getPos()
 {
